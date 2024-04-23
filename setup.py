@@ -2,11 +2,13 @@ from setuptools import find_packages, setup
 
 install_requires = [
     "decorator==4.4.2",
-    "torch<=1.10.1",
+    "torch<=1.10.0",
+    "torch_scatter<=2.0.9",
+    "torch_sparse<=0.6.12",
+    "torch_cluster<=1.6.0",
+    "torch_spline_conv<=1.2.1"
+    "torch_geometric<=2.0.1",
     "cython",
-    "torch_sparse<=0.6.14",
-    "torch_scatter",
-    "torch_geometric<=2.3.0",
     "numpy",
     "networkx",
 ]
