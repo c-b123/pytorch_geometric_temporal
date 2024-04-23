@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 install_requires = [
     "decorator==4.4.2",
-    "torch<=2.0.0",
+    "torch<=1.10.1",
     "cython",
     "torch_sparse<=0.6.14",
     "torch_scatter",
@@ -10,6 +10,7 @@ install_requires = [
     "numpy",
     "networkx",
 ]
+
 tests_require = ["pytest", "pytest-cov", "mock", "networkx", "tqdm"]
 
 keywords = [
