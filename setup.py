@@ -5,7 +5,7 @@ install_requires = [
     "torch",
     "cython",
     "pandas<=1.3.5",
-    "torch_sparse<=0.6.17",
+    "torch_sparse<=0.6.14",
     "torch_scatter",
     "torch_geometric",
     "numpy",
