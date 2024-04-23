@@ -19,11 +19,11 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v1
         with:
-          python-version: 3.11
+          python-version: 3.7.17
       - uses: s-weigand/setup-conda@v1
         with:
           activate-conda: true
-          python-version: 3.11
+          python-version: 3.7
       - run: conda --version
       - run: which python
       - name: Install main dependencies
