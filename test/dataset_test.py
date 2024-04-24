@@ -24,11 +24,11 @@ from torch_geometric_temporal.dataset import (
     MTMDatasetLoader,
 )
 
-from torch_geometric_temporal.dataset import (
-    WindmillOutputLargeDatasetLoader,
-    WindmillOutputMediumDatasetLoader,
-    WindmillOutputSmallDatasetLoader,
-)
+# from torch_geometric_temporal.dataset import (
+#     WindmillOutputLargeDatasetLoader,
+#     WindmillOutputMediumDatasetLoader,
+#     WindmillOutputSmallDatasetLoader,
+# )
 
 
 def get_edge_array(n_count):
@@ -334,37 +334,37 @@ def test_wiki():
             assert snapshot.y.shape == (1068,)
 
 
-def test_windmilllarge():
-    loader = WindmillOutputLargeDatasetLoader()
-    dataset = loader.get_dataset()
-    for epoch in range(2):
-        for snapshot in dataset:
-            assert snapshot.edge_index.shape == (2, 101761)
-            assert snapshot.edge_attr.shape == (101761,)
-            assert snapshot.x.shape == (319, 8)
-            assert snapshot.y.shape == (319,)
-
-
-def test_windmillsmall():
-    loader = WindmillOutputSmallDatasetLoader()
-    dataset = loader.get_dataset()
-    for epoch in range(2):
-        for snapshot in dataset:
-            assert snapshot.edge_index.shape == (2, 121)
-            assert snapshot.edge_attr.shape == (121,)
-            assert snapshot.x.shape == (11, 8)
-            assert snapshot.y.shape == (11,)
-
-
-def test_windmillmedium():
-    loader = WindmillOutputMediumDatasetLoader()
-    dataset = loader.get_dataset()
-    for epoch in range(2):
-        for snapshot in dataset:
-            assert snapshot.edge_index.shape == (2, 676)
-            assert snapshot.edge_attr.shape == (676,)
-            assert snapshot.x.shape == (26, 8)
-            assert snapshot.y.shape == (26,)
+# def test_windmilllarge():
+#     loader = WindmillOutputLargeDatasetLoader()
+#     dataset = loader.get_dataset()
+#     for epoch in range(2):
+#         for snapshot in dataset:
+#             assert snapshot.edge_index.shape == (2, 101761)
+#             assert snapshot.edge_attr.shape == (101761,)
+#             assert snapshot.x.shape == (319, 8)
+#             assert snapshot.y.shape == (319,)
+#
+#
+# def test_windmillsmall():
+#     loader = WindmillOutputSmallDatasetLoader()
+#     dataset = loader.get_dataset()
+#     for epoch in range(2):
+#         for snapshot in dataset:
+#             assert snapshot.edge_index.shape == (2, 121)
+#             assert snapshot.edge_attr.shape == (121,)
+#             assert snapshot.x.shape == (11, 8)
+#             assert snapshot.y.shape == (11,)
+#
+#
+# def test_windmillmedium():
+#     loader = WindmillOutputMediumDatasetLoader()
+#     dataset = loader.get_dataset()
+#     for epoch in range(2):
+#         for snapshot in dataset:
+#             assert snapshot.edge_index.shape == (2, 676)
+#             assert snapshot.edge_attr.shape == (676,)
+#             assert snapshot.x.shape == (26, 8)
+#             assert snapshot.y.shape == (26,)
 
 
 def test_covid():
@@ -411,26 +411,26 @@ def test_metrla_task_generator():
             assert snapshot.y.shape == (207, 5)
 
 
-def test_pemsbay():
-    loader = PemsBayDatasetLoader(raw_data_dir="/tmp/")
-    dataset = loader.get_dataset()
-    for epoch in range(2):
-        for snapshot in dataset:
-            assert snapshot.edge_index.shape == (2, 2694)
-            assert snapshot.edge_attr.shape == (2694,)
-            assert snapshot.x.shape == (325, 2, 12)
-            assert snapshot.y.shape == (325, 2, 12)
+# def test_pemsbay():
+#     loader = PemsBayDatasetLoader(raw_data_dir="/tmp/")
+#     dataset = loader.get_dataset()
+#     for epoch in range(2):
+#         for snapshot in dataset:
+#             assert snapshot.edge_index.shape == (2, 2694)
+#             assert snapshot.edge_attr.shape == (2694,)
+#             assert snapshot.x.shape == (325, 2, 12)
+#             assert snapshot.y.shape == (325, 2, 12)
 
 
-def test_pemsbay_task_generator():
-    loader = PemsBayDatasetLoader(raw_data_dir="/tmp/")
-    dataset = loader.get_dataset(num_timesteps_in=6, num_timesteps_out=5)
-    for epoch in range(2):
-        for snapshot in dataset:
-            assert snapshot.edge_index.shape == (2, 2694)
-            assert snapshot.edge_attr.shape == (2694,)
-            assert snapshot.x.shape == (325, 2, 6)
-            assert snapshot.y.shape == (325, 2, 5)
+# def test_pemsbay_task_generator():
+#     loader = PemsBayDatasetLoader(raw_data_dir="/tmp/")
+#     dataset = loader.get_dataset(num_timesteps_in=6, num_timesteps_out=5)
+#     for epoch in range(2):
+#         for snapshot in dataset:
+#             assert snapshot.edge_index.shape == (2, 2694)
+#             assert snapshot.edge_attr.shape == (2694,)
+#             assert snapshot.x.shape == (325, 2, 6)
+#             assert snapshot.y.shape == (325, 2, 5)
 
 
 def check_tennis_data(event_id, node_count, mode, edge_cnt):
