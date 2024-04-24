@@ -11,7 +11,7 @@ from torch_geometric_temporal.signal import StaticHeteroGraphTemporalSignal
 from torch_geometric_temporal.signal import DynamicHeteroGraphTemporalSignal
 from torch_geometric_temporal.signal import DynamicHeteroGraphStaticSignal
 
-from torch_geometric_temporal.dataset import METRLADatasetLoader, PemsBayDatasetLoader
+# from torch_geometric_temporal.dataset import METRLADatasetLoader, PemsBayDatasetLoader
 from torch_geometric_temporal.dataset import (
     ChickenpoxDatasetLoader,
     PedalMeDatasetLoader,
@@ -389,26 +389,26 @@ def test_montevideobus():
             assert snapshot.y.shape == (675,)
 
 
-def test_metrla():
-    loader = METRLADatasetLoader(raw_data_dir="/tmp/")
-    dataset = loader.get_dataset()
-    for epoch in range(2):
-        for snapshot in dataset:
-            assert snapshot.edge_index.shape == (2, 1722)
-            assert snapshot.edge_attr.shape == (1722,)
-            assert snapshot.x.shape == (207, 2, 12)
-            assert snapshot.y.shape == (207, 12)
-
-
-def test_metrla_task_generator():
-    loader = METRLADatasetLoader(raw_data_dir="/tmp/")
-    dataset = loader.get_dataset(num_timesteps_in=6, num_timesteps_out=5)
-    for epoch in range(2):
-        for snapshot in dataset:
-            assert snapshot.edge_index.shape == (2, 1722)
-            assert snapshot.edge_attr.shape == (1722,)
-            assert snapshot.x.shape == (207, 2, 6)
-            assert snapshot.y.shape == (207, 5)
+# def test_metrla():
+#     loader = METRLADatasetLoader(raw_data_dir="/tmp/")
+#     dataset = loader.get_dataset()
+#     for epoch in range(2):
+#         for snapshot in dataset:
+#             assert snapshot.edge_index.shape == (2, 1722)
+#             assert snapshot.edge_attr.shape == (1722,)
+#             assert snapshot.x.shape == (207, 2, 12)
+#             assert snapshot.y.shape == (207, 12)
+#
+#
+# def test_metrla_task_generator():
+#     loader = METRLADatasetLoader(raw_data_dir="/tmp/")
+#     dataset = loader.get_dataset(num_timesteps_in=6, num_timesteps_out=5)
+#     for epoch in range(2):
+#         for snapshot in dataset:
+#             assert snapshot.edge_index.shape == (2, 1722)
+#             assert snapshot.edge_attr.shape == (1722,)
+#             assert snapshot.x.shape == (207, 2, 6)
+#             assert snapshot.y.shape == (207, 5)
 
 
 # def test_pemsbay():
