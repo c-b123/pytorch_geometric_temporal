@@ -6,7 +6,7 @@ install_requires = [
     "torch_scatter<=2.0.9",
     "torch_sparse<=0.6.12",
     "torch_cluster<=1.6.0",
-    "torch_spline_conv<=1.2.1"
+    "torch_spline_conv<=1.2.1",
     "torch_geometric<=2.0.1",
     "cython",
     "numpy",
