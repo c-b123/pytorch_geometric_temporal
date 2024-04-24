@@ -2,6 +2,7 @@ import numpy as np
 import networkx as nx
 
 from torch_geometric_temporal.signal import temporal_signal_split
+from torch_geometric_temporal.signal import temporal_signal_val_split
 
 from torch_geometric_temporal.signal import StaticGraphTemporalSignal
 from torch_geometric_temporal.signal import DynamicGraphTemporalSignal
@@ -23,6 +24,7 @@ from torch_geometric_temporal.dataset import (
     MontevideoBusDatasetLoader,
     MTMDatasetLoader,
 )
+
 
 # from torch_geometric_temporal.dataset import (
 #     WindmillOutputLargeDatasetLoader,
@@ -53,8 +55,9 @@ def generate_signal(snapshot_count, n_count, feature_count, additional_features_
 
 def generate_heterogeneous_signal(snapshot_count, n_count, feature_count, *additional_features_keys):
     edge_index_dicts = [{('author', 'writes', 'paper'): get_edge_array(n_count)} for _ in range(snapshot_count)]
-    edge_weight_dicts = [{('author', 'writes', 'paper'): np.ones(edge_index_dicts[t][('author', 'writes', 'paper')].shape[1])}
-                         for t in range(snapshot_count)]
+    edge_weight_dicts = [
+        {('author', 'writes', 'paper'): np.ones(edge_index_dicts[t][('author', 'writes', 'paper')].shape[1])}
+        for t in range(snapshot_count)]
     feature_dicts = [{'author': np.random.uniform(0, 1, (n_count, feature_count)),
                       'paper': np.random.uniform(0, 1, (n_count, feature_count))} for _ in range(snapshot_count)]
 
@@ -72,7 +75,6 @@ def generate_heterogeneous_signal(snapshot_count, n_count, feature_count, *addit
 
 
 def test_dynamic_graph_temporal_signal_real():
-
     snapshot_count = 250
     n_count = 100
     feature_count = 32
@@ -298,7 +300,6 @@ def test_dynamic_hetero_graph_temporal_signal_edges():
         assert snapshot.edge_stores[0]['edge_index'].shape == (2, 2)
         assert snapshot.edge_stores[0]['edge_attr'].shape == (2, 1)
         assert snapshot.edge_stores[0]['edge_index'].shape[0] == snapshot.edge_stores[0]['edge_attr'].shape[0]
-
 
 
 def test_chickenpox():
@@ -734,8 +735,38 @@ def test_discrete_train_test_split_static():
             assert snapshot.y.shape == (20,)
 
 
-def test_discrete_train_test_split_dynamic():
+def test_discrete_train_val_test_split_static():
+    loader = ChickenpoxDatasetLoader()
+    dataset = loader.get_dataset()
+    train_dataset, val_dataset, test_dataset = temporal_signal_val_split(dataset, val_ratio=0.1, test_ratio=0.1)
 
+    assert train_dataset.snapshot_count == 413
+    assert val_dataset.snapshot_count == 52
+    assert test_dataset.snapshot_count == 52
+
+    for epoch in range(2):
+        for snapshot in train_dataset:
+            assert snapshot.edge_index.shape == (2, 102)
+            assert snapshot.edge_attr.shape == (102,)
+            assert snapshot.x.shape == (20, 4)
+            assert snapshot.y.shape == (20,)
+
+    for epoch in range(2):
+        for snapshot in val_dataset:
+            assert snapshot.edge_index.shape == (2, 102)
+            assert snapshot.edge_attr.shape == (102,)
+            assert snapshot.x.shape == (20, 4)
+            assert snapshot.y.shape == (20,)
+
+    for epoch in range(2):
+        for snapshot in test_dataset:
+            assert snapshot.edge_index.shape == (2, 102)
+            assert snapshot.edge_attr.shape == (102,)
+            assert snapshot.x.shape == (20, 4)
+            assert snapshot.y.shape == (20,)
+
+
+def test_discrete_train_test_split_dynamic():
     snapshot_count = 250
     n_count = 100
     feature_count = 32
@@ -772,7 +803,6 @@ def test_discrete_train_test_split_dynamic():
 
 
 def test_train_test_split_dynamic_graph_static_signal():
-
     snapshot_count = 250
     n_count = 100
     feature_count = 32
@@ -808,7 +838,6 @@ def test_train_test_split_dynamic_graph_static_signal():
 
 
 def test_discrete_train_test_split_dynamic_graph_static_signal():
-
     snapshot_count = 250
     n_count = 100
     feature_count = 32
@@ -822,7 +851,7 @@ def test_discrete_train_test_split_dynamic_graph_static_signal():
     targets = [np.random.uniform(0, 10, (n_count,)) for _ in range(snapshot_count)]
 
     dataset = DynamicGraphStaticSignal(
-        edge_indices, edge_weights, feature, targets,  **additional_features
+        edge_indices, edge_weights, feature, targets, **additional_features
     )
 
     train_dataset, test_dataset = temporal_signal_split(dataset, 0.8)
@@ -847,7 +876,6 @@ def test_discrete_train_test_split_dynamic_graph_static_signal():
 
 
 def test_train_test_split_dynamic_hetero_graph_temporal_signal():
-
     snapshot_count = 250
     n_count = 100
     feature_count = 32
@@ -896,7 +924,6 @@ def test_train_test_split_dynamic_hetero_graph_temporal_signal():
 
 
 def test_train_test_split_static_hetero_graph_temporal_signal():
-
     snapshot_count = 250
     n_count = 100
     feature_count = 32
@@ -945,7 +972,6 @@ def test_train_test_split_static_hetero_graph_temporal_signal():
 
 
 def test_train_test_split_dynamic_hetero_graph_static_signal():
-
     snapshot_count = 250
     n_count = 100
     feature_count = 32
@@ -955,7 +981,7 @@ def test_train_test_split_dynamic_hetero_graph_static_signal():
     )
 
     dataset = DynamicHeteroGraphStaticSignal(
-        edge_index_dicts, edge_weight_dicts, feature_dicts[0], target_dicts,  **additional_feature_dicts
+        edge_index_dicts, edge_weight_dicts, feature_dicts[0], target_dicts, **additional_feature_dicts
     )
 
     train_dataset, test_dataset = temporal_signal_split(dataset, 0.8)
