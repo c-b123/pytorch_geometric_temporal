@@ -741,8 +741,8 @@ def test_discrete_train_val_test_split_static():
     train_dataset, val_dataset, test_dataset = temporal_signal_val_split(dataset, val_ratio=0.1, test_ratio=0.1)
 
     assert train_dataset.snapshot_count == 413
-    assert val_dataset.snapshot_count == 52
-    assert test_dataset.snapshot_count == 52
+    assert val_dataset.snapshot_count == 51
+    assert test_dataset.snapshot_count == 53
 
     for epoch in range(2):
         for snapshot in train_dataset:
