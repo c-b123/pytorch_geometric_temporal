@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 install_requires = [
     "decorator==4.4.2",
-    "torch<=1.10.0",
+    "torch<=1.11.0",
     "torch_scatter<=2.0.9",
     "torch_sparse<=0.6.12",
     "torch_cluster<=1.6.0",
