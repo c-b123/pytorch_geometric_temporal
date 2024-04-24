@@ -17,3 +17,4 @@ from .dynamic_hetero_graph_static_signal import *
 from .dynamic_hetero_graph_static_signal_batch import *
 
 from .train_test_split import *
+from .train_val_test_split import *
