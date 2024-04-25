@@ -1,9 +1,5 @@
 networkx
 numpy
-https://data.pyg.org/whl/torch-2.2.1+cu121.html
-https://data.pyg.org/whl/torch-2.2.1+cu121.html
-https://data.pyg.org/whl/torch-2.2.1+cu121.html
-https://data.pyg.org/whl/torch-2.2.1+cu121.html
 torch_geometric
 sphinx==4.0.2
 sphinx_rtd_theme==0.5.2
