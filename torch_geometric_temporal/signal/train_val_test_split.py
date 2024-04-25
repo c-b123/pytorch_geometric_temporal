@@ -34,7 +34,7 @@ Discrete_Signal = Union[
 ]
 
 
-def temporal_signal_split(data_iterator, val_ratio: float = 0.1, test_ratio: float = 0.1) \
+def temporal_signal_val_split(data_iterator, val_ratio: float = 0.1, test_ratio: float = 0.1) \
         -> Tuple[Discrete_Signal, Discrete_Signal, Discrete_Signal]:
     r"""Function to split a data iterator according to fixed ratios.
 
