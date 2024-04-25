@@ -46,10 +46,10 @@ setup(
     url="https://github.com/benedekrozemberczki/pytorch_geometric_temporal",
     download_url="https://github.com/benedekrozemberczki/pytorch_geometric_temporal/archive/v0.54.0.tar.gz",
     keywords=keywords,
-    install_requires=install_requires,
+    # install_requires=install_requires,
     extras_require={
         "test": tests_require,
-    },    
+    },
     python_requires=">=3.6",
     classifiers=[
         "Development Status :: 3 - Alpha",
