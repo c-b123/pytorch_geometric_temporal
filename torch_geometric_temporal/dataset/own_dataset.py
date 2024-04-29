@@ -1,6 +1,8 @@
 import json
 import requests
 import numpy as np
+import torch
+
 from torch_geometric_temporal.signal import StaticGraphTemporalSignal
 
 
@@ -32,10 +34,10 @@ class StaticDatasetLoader(object):
 
     def _standardize_dataset(self):
         data = np.array(self._dataset["FX"])
-        mean = np.mean(data, axis=0)
-        std = np.std(data, axis=0)
+        self.mean = np.mean(data, axis=0)
+        self.std = np.std(data, axis=0)
 
-        self._dataset["FX"] = (data - mean) / std
+        self._dataset["FX"] = (data - self.mean) / self.std
 
     def _get_edges(self):
         self._edges = np.array(self._dataset["edges"]).T
@@ -54,7 +56,7 @@ class StaticDatasetLoader(object):
             for i in range(stacked_target.shape[0] - self.lags)
         ]
 
-    def get_dataset(self, lags: int = 4) -> StaticGraphTemporalSignal:
+    def get_dataset(self, lags: int = 4, standardize: bool = True) -> StaticGraphTemporalSignal:
         """Returning the Chickenpox Hungary data iterator.
 
         Args types:
@@ -63,6 +65,8 @@ class StaticDatasetLoader(object):
             * **dataset** *(StaticGraphTemporalSignal)* - The Chickenpox Hungary dataset.
         """
         self.lags = lags
+        if standardize:
+            self._standardize_dataset()
         self._get_edges()
         self._get_edge_weights()
         self._get_targets_and_features()
@@ -71,7 +75,14 @@ class StaticDatasetLoader(object):
         )
         return dataset
 
+    def unstandardize(self, pred: torch.Tensor):
+        # TODO: dimensionality check
+        print(self.std.shape)
+        return np.multiply(pred, self.std) + self.mean
+
 
 if __name__ == "__main__":
     loader = StaticDatasetLoader("Resources/test_data.json")
-    dataset = loader.get_dataset()
+    dataset = loader.get_dataset(lags=4)
+    print(dataset.features)
+    # print(loader.unstandardize(dataset.targets[0]))
