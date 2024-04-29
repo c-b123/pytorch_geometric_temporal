@@ -30,6 +30,13 @@ class StaticDatasetLoader(object):
             print(f"Failed to retrieve file: {response.status_code}")
             return None
 
+    def _standardize_dataset(self):
+        data = np.array(self._dataset["FX"])
+        mean = np.mean(data, axis=0)
+        std = np.std(data, axis=0)
+
+        self._dataset["FX"] = (data - mean) / std
+
     def _get_edges(self):
         self._edges = np.array(self._dataset["edges"]).T
 
@@ -66,5 +73,5 @@ class StaticDatasetLoader(object):
 
 
 if __name__ == "__main__":
-    loader = StaticDatasetLoader("Resources/datasetV2.json")
+    loader = StaticDatasetLoader("Resources/test_data.json")
     dataset = loader.get_dataset()
