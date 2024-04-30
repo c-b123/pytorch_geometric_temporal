@@ -9,6 +9,8 @@ from torch_geometric_temporal.signal import StaticGraphTemporalSignal
 class StaticDatasetLoader(object):
 
     def __init__(self, path, colab=False):
+        self.lags = None
+        self.offset = None
         self._read_web_data(path, colab)
 
     def _read_web_data(self, path, colab):
@@ -56,20 +58,45 @@ class StaticDatasetLoader(object):
             for i in range(stacked_target.shape[0] - self.lags)
         ]
 
-    def get_dataset(self, lags: int = 4, standardize: bool = True) -> StaticGraphTemporalSignal:
+    def _get_targets_and_features_with_offset(self):
+        """
+        Creates feature and target matrix. This function considers an offset. The offset is the time window between
+        feature and target. Raises an exception if the dataset is too short for the specified input window and offset.
+        """
+        stacked_target = np.array(self._dataset["FX"])
+        num_snapshots = stacked_target.shape[0] - self.lags - self.offset + 1
+        if num_snapshots <= 0:
+            raise Exception(
+                "Feature and target vector are not specified. The input window and the offset are greater"
+                " than the dataset. Check length of dataset and input window and offset.")
+        self.features = [
+            stacked_target[i: i + self.lags, :].T
+            for i in range(num_snapshots)
+        ]
+        self.targets = [
+            stacked_target[i + self.lags + self.offset - 1, :].T
+            for i in range(num_snapshots)
+        ]
+
+    def get_dataset(self, lags: int = 4, offset: int = 1, standardize: bool = True) -> StaticGraphTemporalSignal:
         """Returning the Chickenpox Hungary data iterator.
 
         Args types:
             * **lags** *(int)* - The number of time lags.
+            * **offset** *(int)* - The number of time steps between features and target values.
         Return types:
             * **dataset** *(StaticGraphTemporalSignal)* - The Chickenpox Hungary dataset.
         """
         self.lags = lags
+        self.offset = offset
         if standardize:
             self._standardize_dataset()
         self._get_edges()
         self._get_edge_weights()
-        self._get_targets_and_features()
+        if offset > 1:
+            self._get_targets_and_features_with_offset()
+        else:
+            self._get_targets_and_features()
         dataset = StaticGraphTemporalSignal(
             self._edges, self._edge_weights, self.features, self.targets
         )
@@ -83,6 +110,4 @@ class StaticDatasetLoader(object):
 
 if __name__ == "__main__":
     loader = StaticDatasetLoader("Resources/test_data.json")
-    dataset = loader.get_dataset(lags=4)
-    print(dataset.features)
-    # print(loader.unstandardize(dataset.targets[0]))
+    dataset = loader.get_dataset(lags=2, offset=3, standardize=False)

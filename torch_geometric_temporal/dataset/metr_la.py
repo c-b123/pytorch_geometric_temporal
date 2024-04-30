@@ -34,19 +34,19 @@ class METRLADatasetLoader(object):
 
         # Check if zip file is in data folder from working directory, otherwise download
         if not os.path.isfile(
-            os.path.join(self.raw_data_dir, "METR-LA.zip")
+                os.path.join(self.raw_data_dir, "METR-LA.zip")
         ):  # pragma: no cover
             if not os.path.exists(self.raw_data_dir):
                 os.makedirs(self.raw_data_dir)
             self._download_url(url, os.path.join(self.raw_data_dir, "METR-LA.zip"))
 
         if not os.path.isfile(
-            os.path.join(self.raw_data_dir, "adj_mat.npy")
+                os.path.join(self.raw_data_dir, "adj_mat.npy")
         ) or not os.path.isfile(
             os.path.join(self.raw_data_dir, "node_values.npy")
         ):  # pragma: no cover
             with zipfile.ZipFile(
-                os.path.join(self.raw_data_dir, "METR-LA.zip"), "r"
+                    os.path.join(self.raw_data_dir, "METR-LA.zip"), "r"
             ) as zip_fh:
                 zip_fh.extractall(self.raw_data_dir)
 
@@ -91,14 +91,14 @@ class METRLADatasetLoader(object):
         # Generate observations
         features, target = [], []
         for i, j in indices:
-            features.append((self.X[:, :, i : i + num_timesteps_in]).numpy())
-            target.append((self.X[:, 0, i + num_timesteps_in : j]).numpy())
+            features.append((self.X[:, :, i: i + num_timesteps_in]).numpy())
+            target.append((self.X[:, 0, i + num_timesteps_in: j]).numpy())
 
         self.features = features
         self.targets = target
 
     def get_dataset(
-        self, num_timesteps_in: int = 12, num_timesteps_out: int = 12
+            self, num_timesteps_in: int = 12, num_timesteps_out: int = 12
     ) -> StaticGraphTemporalSignal:
         """Returns data iterator for METR-LA dataset as an instance of the
         static graph temporal signal class.
