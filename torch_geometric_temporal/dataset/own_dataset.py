@@ -11,11 +11,23 @@ from torch_geometric_temporal.signal import StaticGraphTemporalSignal
 class StaticDatasetLoader(object):
 
     def __init__(self, path, colab=False):
-        self.lags = None
+        # Input parameters
+        self.input_window = None
         self.offset = None
-        self.val_ratio = 0
-        self.test_ratio = 0
+        self.standardize = None
+        self.val_ratio = None
+        self.test_ratio = None
+        # Computed parameters
+        self._training_mean = None
+        self._training_std = None
+        self._edges = None
+        self._edge_weights = None
+        self._features = None
+        self._targets = None
+        # Data
+        self._dataset = None
         self._signal = None
+        # Methods
         self._read_web_data(path, colab)
 
     def _read_web_data(self, path, colab):
@@ -39,14 +51,6 @@ class StaticDatasetLoader(object):
             print(f"Failed to retrieve file: {response.status_code}")
             return None
 
-    def _standardize_dataset(self):
-        data = np.array(self._dataset["FX"])
-        train_snapshots = int((1 - self.val_ratio - self.test_ratio) * data.shape[0])
-        self.mean = np.mean(data[0:train_snapshots], axis=0)
-        self.std = np.std(data[0:train_snapshots], axis=0)
-
-        self._dataset["FX"] = (data - self.mean) / self.std
-
     def _get_edges(self):
         self._edges = np.array(self._dataset["edges"]).T
 
@@ -54,80 +58,82 @@ class StaticDatasetLoader(object):
         self._edge_weights = np.ones(self._edges.shape[1])
 
     def _get_targets_and_features(self):
-        stacked_target = np.array(self._dataset["FX"])
-        self.features = [
-            stacked_target[i: i + self.lags, :].T
-            for i in range(stacked_target.shape[0] - self.lags)
-        ]
-        self.targets = [
-            stacked_target[i + self.lags, :].T
-            for i in range(stacked_target.shape[0] - self.lags)
-        ]
-
-    def _get_targets_and_features_with_offset(self):
-        """
-        Creates feature and target matrix. This function considers an offset. The offset is the time window between
-        feature and target. Raises an exception if the dataset is too short for the specified input window and offset.
-        """
-        stacked_target = np.array(self._dataset["FX"])
-        num_snapshots = stacked_target.shape[0] - self.lags - self.offset + 1
-        if num_snapshots <= 0:
+        data_array = np.array(self._dataset["FX"])
+        n_snapshots = data_array.shape[0] - self.input_window - self.offset + 1
+        if n_snapshots <= 0:
             raise Exception(
                 "Feature and target vector are not specified. The input window and the offset are greater"
-                " than the dataset. Check length of dataset and input window and offset.")
-        self.features = [
-            stacked_target[i: i + self.lags, :].T
-            for i in range(num_snapshots)
+                " than the dataset. Check length of dataset, input window and offset.")
+        self._features = [
+            data_array[i: i + self.input_window, :].T
+            for i in range(n_snapshots)
         ]
-        self.targets = [
-            stacked_target[i + self.lags + self.offset - 1, :].T
-            for i in range(num_snapshots)
+        self._targets = [
+            data_array[i + self.input_window + self.offset - 1, :].T
+            for i in range(n_snapshots)
         ]
 
-    def get_dataset(self, lags: int = 4, offset: int = 1, standardize: bool = False) -> StaticGraphTemporalSignal:
-        """Returning the Chickenpox Hungary data iterator.
+    def _standardize(self):
+        data = np.array(self._dataset["FX"])
+        train_snapshots = int((1 - self.val_ratio - self.test_ratio) * data.shape[0])
+        self._training_mean = np.mean(data[0:train_snapshots], axis=0)
+        self._training_std = np.std(data[0:train_snapshots], axis=0)
+        self._dataset["FX"] = (data - self._training_mean) / self._training_std
 
-        Args types:
-            * **lags** *(int)* - The number of time lags.
-            * **offset** *(int)* - The number of time steps between features and target values.
-        Return types:
-            * **dataset** *(StaticGraphTemporalSignal)* - The Chickenpox Hungary dataset.
-        """
-        self.prepare_dataset(lags=lags, offset=offset, standardize=standardize)
-        return self._signal
+    def _normalize(self):
+        # TODO: Implement normalization
+        pass
 
-    def prepare_dataset(self, lags: int = 4, offset: int = 1, standardize: bool = False):
-        self.lags = lags
+    def get_training_mean_and_std(self):
+        return self._training_mean, self._training_std
+
+    def get_training_min_and_max(self):
+        # TODO: Implement getter for parameters of min-max normalization
+        pass
+
+    def get_dataset(self, input_window: int = 4, offset: int = 1, standardize: bool = True,
+                    val_ratio: float = 0.1, test_ratio: float = 0.1):
+        # Set parameters
+        self.input_window = input_window
         self.offset = offset
+        self.standardize = standardize
+        self.val_ratio = val_ratio
+        self.test_ratio = test_ratio
+
+        # Standardize if specified
         if standardize:
-            self._standardize_dataset()
+            self._standardize()
+
+        # Get edges and corresponding weights
         self._get_edges()
         self._get_edge_weights()
-        if offset > 1:
-            self._get_targets_and_features_with_offset()
-        else:
-            self._get_targets_and_features()
-        self._signal = StaticGraphTemporalSignal(self._edges, self._edge_weights, self.features, self.targets)
+        self._get_targets_and_features()
 
-    def get_train_test_split(self, lags: int = 4, offset: int = 1, standardize: bool = False, test_ratio: float = 0.2):
-        self.prepare_dataset(lags=lags, offset=offset, standardize=standardize)
-        return temporal_signal_split(self._signal, train_ratio=1-test_ratio)
+        if val_ratio == 0 and test_ratio == 0:
+            self._signal = StaticGraphTemporalSignal(self._edges, self._edge_weights, self._features, self._targets)
+            return self._signal
+        if val_ratio == 0 and not test_ratio == 0:
+            self._signal = StaticGraphTemporalSignal(self._edges, self._edge_weights, self._features, self._targets)
+            return temporal_signal_split(self._signal, train_ratio=1 - self.test_ratio)
+        self._signal = StaticGraphTemporalSignal(self._edges, self._edge_weights, self._features, self._targets)
+        return temporal_signal_val_split(self._signal, val_ratio=self.val_ratio, test_ratio=self.test_ratio)
 
-    def get_train_val_test_split(self, lags: int = 4, offset: int = 1, standardize: bool = False,
-                                 val_ratio: float = 0.1, test_ratio: float = 0.1):
-        self.prepare_dataset(lags=lags, offset=offset, standardize=standardize)
-        return temporal_signal_val_split(self._signal, val_ratio=val_ratio, test_ratio=test_ratio)
-
-    def unstandardize(self, pred: torch.Tensor):
-        assert pred.shape[0] == self.features[0].shape[0]
-        result = np.multiply(pred.squeeze(), self.std) + self.mean
+    def destandardize(self, pred: torch.Tensor):
+        # Check whether prediction array has the correct dimension
+        assert pred.shape == self._features[0].shape[0], (f"The input of dimension {pred.shape} and"
+                                                             f" the number of nodes {self._features[0].shape[0]}"
+                                                             f" are not equal.")
+        result = np.multiply(pred, self._training_std) + self._training_mean
         return result
+
+    def denormalize(self, pred: torch.Tensor):
+        # TODO: Implement denormalization
+        pass
 
 
 if __name__ == "__main__":
     loader = StaticDatasetLoader("Resources/test_data.json")
-    # train, test = loader.get_train_test_split(lags=2, offset=3, standardize=False, test_ratio=0.2)
-    data = loader.get_dataset(lags=2, offset=3, standardize=True)
+    data = loader.get_dataset(input_window=2, offset=3, standardize=True)
     test_tensor = torch.tensor([[1], [2], [3]])
-    un = loader.unstandardize(test_tensor)
-    a = 54
+    test_tensor_squeezed = test_tensor.squeeze()
+    un = loader.destandardize(test_tensor_squeezed)
