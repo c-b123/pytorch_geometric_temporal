@@ -221,6 +221,13 @@ class MyTestCase(unittest.TestCase):
         actual = loader.destandardize(torch.Tensor([[0], [0], [0]]).squeeze())
         np.testing.assert_almost_equal(expected, actual, decimal=3)
 
+    def test_difference_1(self):
+        loader = StaticDatasetLoader("Resources/test_data.json")
+        loader.get_dataset(input_window=1, offset=1, difference=True, standardize=False, val_ratio=0, test_ratio=0)
+        expected = np.array([[1, 1, 1], [4, 4, 7], [4, 2, -1], [-8, -6, -4]])
+        actual = loader._train
+        np.testing.assert_almost_equal(expected, actual, decimal=3)
+
 
 if __name__ == '__main__':
     unittest.main()
