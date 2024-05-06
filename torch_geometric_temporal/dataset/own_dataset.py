@@ -12,6 +12,7 @@ class StaticDatasetLoader(object):
         # Input parameters
         self.input_window = None
         self.offset = None
+        self.difference = None
         self.standardize = None
         self.val_ratio = None
         self.test_ratio = None
@@ -120,6 +121,7 @@ class StaticDatasetLoader(object):
         # Set parameters
         self.input_window = input_window
         self.offset = offset
+        self.difference = difference
         self.standardize = standardize
         self.val_ratio = val_ratio
         self.test_ratio = test_ratio
@@ -128,11 +130,11 @@ class StaticDatasetLoader(object):
         self._train_val_test_split()
 
         # Compute first-order difference
-        if difference:
+        if self.difference:
             self._difference()
 
         # Standardize if specified
-        if standardize:
+        if self.standardize:
             self._standardize()
 
         # Get edges and corresponding weights
