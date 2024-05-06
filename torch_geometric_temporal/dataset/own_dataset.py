@@ -149,9 +149,10 @@ class StaticDatasetLoader(object):
 
     def destandardize(self, pred: torch.Tensor):
         # Check whether prediction array has the correct dimension
-        assert pred.shape == self._features[0].shape[0], (f"The input of dimension {pred.shape} and"
-                                                          f" the number of nodes {self._features[0].shape[0]}"
-                                                          f" are not equal.")
+        assert pred.shape[0] == self._features_train[0].shape[0], (f"The input of dimension {pred.shape} and"
+                                                                f" the number of nodes"
+                                                                f" {self._features_train[0].shape[0]}"
+                                                                f" are not equal.")
         result = np.multiply(pred, self._training_std) + self._training_mean
         return result
 
