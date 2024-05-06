@@ -3,8 +3,6 @@ import requests
 import numpy as np
 import torch
 
-from torch_geometric_temporal.signal import temporal_signal_val_split
-from torch_geometric_temporal.signal import temporal_signal_split
 from torch_geometric_temporal.signal import StaticGraphTemporalSignal
 
 
@@ -68,6 +66,11 @@ class StaticDatasetLoader(object):
         self._val = self._fx_data[train_snapshots:val_snapshots]
         self._test = self._fx_data[val_snapshots:]
 
+    def _difference(self):
+        self._train = np.diff(self._train, n=1, axis=0)
+        self._val = np.diff(self._val, n=1, axis=0)
+        self._test = np.diff(self._test, n=1, axis=0)
+
     def _standardize(self):
         self._training_mean = np.mean(self._train, axis=0)
         self._training_std = np.std(self._train, axis=0)
@@ -112,7 +115,7 @@ class StaticDatasetLoader(object):
         # TODO: Implement getter for parameters of min-max normalization
         pass
 
-    def get_dataset(self, input_window: int = 4, offset: int = 1, standardize: bool = True,
+    def get_dataset(self, input_window: int = 4, offset: int = 1, difference: bool = False, standardize: bool = True,
                     val_ratio: float = 0, test_ratio: float = 0):
         # Set parameters
         self.input_window = input_window
@@ -124,6 +127,10 @@ class StaticDatasetLoader(object):
         # Split dataset
         self._train_val_test_split()
 
+        # Compute first-order difference
+        if difference:
+            self._difference()
+
         # Standardize if specified
         if standardize:
             self._standardize()
@@ -134,6 +141,7 @@ class StaticDatasetLoader(object):
         self._get_targets_and_features_train()
         train_signal = StaticGraphTemporalSignal(self._edges, self._edge_weights,
                                                  self._features_train, self._targets_train)
+
         val_signal = StaticGraphTemporalSignal(self._edges, self._edge_weights, [], [])
         if val_ratio > 0:
             self._get_targets_and_features_val()
@@ -150,9 +158,9 @@ class StaticDatasetLoader(object):
     def destandardize(self, pred: torch.Tensor):
         # Check whether prediction array has the correct dimension
         assert pred.shape[0] == self._features_train[0].shape[0], (f"The input of dimension {pred.shape} and"
-                                                                f" the number of nodes"
-                                                                f" {self._features_train[0].shape[0]}"
-                                                                f" are not equal.")
+                                                                   f" the number of nodes"
+                                                                   f" {self._features_train[0].shape[0]}"
+                                                                   f" are not equal.")
         result = np.multiply(pred, self._training_std) + self._training_mean
         return result
 
