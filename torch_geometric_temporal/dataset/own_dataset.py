@@ -74,7 +74,8 @@ class StaticDatasetLoader(object):
 
     def _standardize(self):
         self._training_mean = np.mean(self._train, axis=0)
-        self._training_std = np.std(self._train, axis=0)
+        # self._training_std = np.std(self._train, axis=0)
+        self._training_std = np.where(np.std(self._train, axis=0) == 0, 0.001, np.std(self._train, axis=0))
         self._train = (self._train - self._training_mean) / self._training_std
         self._val = (self._val - self._training_mean) / self._training_std
         self._test = (self._test - self._training_mean) / self._training_std
