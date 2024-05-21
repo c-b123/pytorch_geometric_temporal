@@ -6,8 +6,7 @@ import torch
 from torch_geometric_temporal.signal import StaticGraphTemporalSignal
 
 
-class StaticDatasetLoader(object):
-    # TODO: Support for multivariate time series
+class StaticClassificationDatasetLoader(object):
 
     def __init__(self, path, colab=False):
         # Input parameters
@@ -49,7 +48,8 @@ class StaticDatasetLoader(object):
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
             self._raw_dataset = json.loads(response.text)
-            self._fx_data = np.array(self._raw_dataset["FX"])
+            self._fx_data = np.array(self._raw_dataset["FX"])[:, 0, :]
+            self._fx_target = np.array(self._raw_dataset["FX"])[:, 1, :]
             print("SUCCESS Dataset loaded from GitHub")
         else:
             print(f"Failed to retrieve file: {response.status_code}")
@@ -68,6 +68,10 @@ class StaticDatasetLoader(object):
         self._val = self._fx_data[train_snapshots:val_snapshots]
         self._test = self._fx_data[val_snapshots:]
 
+        self._train_target = self._fx_target[0:train_snapshots]
+        self._val_target = self._fx_target[train_snapshots:val_snapshots]
+        self._test_target = self._fx_target[val_snapshots:]
+
     def _difference(self):
         self._train = np.diff(self._train, n=1, axis=0)
         self._val = np.diff(self._val, n=1, axis=0)
@@ -85,7 +89,7 @@ class StaticDatasetLoader(object):
         # TODO: Implement normalization
         pass
 
-    def _get_targets_and_features(self, dataset, suffix):
+    def _get_targets_and_features(self, dataset, dataset_targets, suffix):
         n_snapshots = dataset.shape[0] - self.input_window - self.offset + 1
         if n_snapshots <= 0:
             raise Exception(
@@ -96,20 +100,20 @@ class StaticDatasetLoader(object):
             for i in range(n_snapshots)
         ]
         targets = [
-            dataset[i + self.input_window + self.offset - 1, :].T
+            dataset_targets[i + self.input_window + self.offset - 1, :].T
             for i in range(n_snapshots)
         ]
         setattr(self, f"_features{suffix}", features)
         setattr(self, f"_targets{suffix}", targets)
 
     def _get_targets_and_features_train(self):
-        self._get_targets_and_features(self._train, '_train')
+        self._get_targets_and_features(self._train, self._train_target, '_train')
 
     def _get_targets_and_features_val(self):
-        self._get_targets_and_features(self._val, '_val')
+        self._get_targets_and_features(self._val, self._val_target, '_val')
 
     def _get_targets_and_features_test(self):
-        self._get_targets_and_features(self._test, '_test')
+        self._get_targets_and_features(self._test, self._test_target, '_test')
 
     def get_training_mean_and_std(self):
         return self._training_mean, self._training_std
@@ -174,8 +178,9 @@ class StaticDatasetLoader(object):
 
 
 if __name__ == "__main__":
-    loader = StaticDatasetLoader("Resources/test_data.json")
-    data = loader.get_dataset(input_window=2, offset=3, standardize=True, val_ratio=0, test_ratio=0)
+    loader = StaticClassificationDatasetLoader("Resources/classifier_test.json")
+    data = loader.get_dataset(input_window=2, offset=3, standardize=True, val_ratio=0.1, test_ratio=0.1)
+
     test_tensor = torch.tensor([[1], [2], [3]])
     test_tensor_squeezed = test_tensor.squeeze()
     un = loader.destandardize(test_tensor_squeezed)
