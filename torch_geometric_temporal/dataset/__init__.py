@@ -10,4 +10,4 @@ from .encovid import EnglandCovidDatasetLoader
 from .twitter_tennis import TwitterTennisDatasetLoader
 from .montevideo_bus import MontevideoBusDatasetLoader
 from .mtm import MTMDatasetLoader
-from .own_dataset import StaticDatasetLoader
+from .StaticDatasetLoader import StaticDatasetLoader

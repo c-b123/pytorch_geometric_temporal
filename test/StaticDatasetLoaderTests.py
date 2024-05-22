@@ -5,7 +5,7 @@ import numpy as np
 from torch_geometric_temporal import StaticDatasetLoader
 
 
-class MyTestCase(unittest.TestCase):
+class StaticDatasetLoaderTests(unittest.TestCase):
     def test__get_targets_and_features_with_offset_1(self):
         loader = StaticDatasetLoader("Resources/test_data.json")
         loader.get_dataset(input_window=2, offset=3, standardize=False)
