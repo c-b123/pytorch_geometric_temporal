@@ -11,3 +11,4 @@ from .twitter_tennis import TwitterTennisDatasetLoader
 from .montevideo_bus import MontevideoBusDatasetLoader
 from .mtm import MTMDatasetLoader
 from .StaticDatasetLoader import StaticDatasetLoader
+from .StaticClassificationDatasetLoader import StaticClassificationDatasetLoader
