@@ -7,6 +7,7 @@ from torch_geometric_temporal.signal import StaticGraphTemporalSignal
 
 
 class StaticClassificationDatasetLoader(object):
+    # TODO merge into StaticDatasetLoader for less duplicated code
 
     def __init__(self, path, colab=False):
         # Input parameters
@@ -49,7 +50,7 @@ class StaticClassificationDatasetLoader(object):
         if response.status_code == 200:
             self._raw_dataset = json.loads(response.text)
             self._fx_data = np.array(self._raw_dataset["FX"])[:, 0, :]
-            self._fx_target = np.array(self._raw_dataset["FX"])[:, 1, :]
+            self._fx_data_target = np.array(self._raw_dataset["FX"])[:, 1, :]
             print("SUCCESS Dataset loaded from GitHub")
         else:
             print(f"Failed to retrieve file: {response.status_code}")
@@ -68,9 +69,9 @@ class StaticClassificationDatasetLoader(object):
         self._val = self._fx_data[train_snapshots:val_snapshots]
         self._test = self._fx_data[val_snapshots:]
 
-        self._train_target = self._fx_target[0:train_snapshots]
-        self._val_target = self._fx_target[train_snapshots:val_snapshots]
-        self._test_target = self._fx_target[val_snapshots:]
+        self._train_target = self._fx_data_target[0:train_snapshots]
+        self._val_target = self._fx_data_target[train_snapshots:val_snapshots]
+        self._test_target = self._fx_data_target[val_snapshots:]
 
     def _difference(self):
         self._train = np.diff(self._train, n=1, axis=0)
