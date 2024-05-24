@@ -49,17 +49,17 @@ class StaticDatasetLoader(object):
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
             self._raw_dataset = json.loads(response.text)
-            self._fx_data = np.array(self._raw_dataset["FX"])
+            self._fx_data = np.array(self._raw_dataset["FX"], dtype=np.float32)
             print("SUCCESS Dataset loaded from GitHub")
         else:
             print(f"Failed to retrieve file: {response.status_code}")
             return None
 
     def _get_edges(self):
-        self._edges = np.array(self._raw_dataset["edges"]).T
+        self._edges = np.array(self._raw_dataset["edges"], dtype=np.float32).T
 
     def _get_edge_weights(self):
-        self._edge_weights = np.ones(self._edges.shape[1])
+        self._edge_weights = np.ones(self._edges.shape[1], dtype=np.float32)
 
     def _train_val_test_split(self):
         train_snapshots = int((1 - self.val_ratio - self.test_ratio) * self._fx_data.shape[0])
