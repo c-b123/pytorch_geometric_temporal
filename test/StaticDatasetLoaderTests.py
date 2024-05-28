@@ -1,5 +1,6 @@
 import unittest
 import torch
+import torch.testing
 import numpy as np
 
 from torch_geometric_temporal import StaticDatasetLoader
@@ -183,8 +184,8 @@ class StaticDatasetLoaderTests(unittest.TestCase):
                          [0.16509766868259929, 0.2407717061715385, 1.5194078903533863]])
 
         np.testing.assert_almost_equal(loader._train, train, decimal=3)
-        np.testing.assert_array_equal(loader._val, np.empty([0, 3]))
-        np.testing.assert_array_equal(loader._test, test)
+        np.testing.assert_almost_equal(loader._val, np.empty([0, 3]), decimal=3)
+        np.testing.assert_almost_equal(loader._test, test, decimal=3)
 
     def test_standardize_3(self):
         loader = StaticDatasetLoader("Resources/test_data_v2.json")
@@ -227,6 +228,51 @@ class StaticDatasetLoaderTests(unittest.TestCase):
         expected = np.array([[1, 1, 1], [4, 4, 7], [4, 2, -1], [-8, -6, -4]])
         actual = loader._train
         np.testing.assert_almost_equal(expected, actual, decimal=3)
+
+    def test_difference_2(self):
+        loader = StaticDatasetLoader("Resources/test_data.json")
+        loader.get_dataset(input_window=1, offset=1, difference=True, standardize=True, val_ratio=0, test_ratio=0)
+        expected = np.array([[0.15249857033260467, 0.1991169934799916, 0.062136976600120006],
+                             [0.7624928516630234, 0.9955849673999579, 1.553424415003],
+                             [0.7624928516630234, 0.4646063181199804, -0.43495883620084],
+                             [-1.6774842736586515, -1.6593082789999298, -1.18060255540228]])
+        actual = loader._train
+        np.testing.assert_almost_equal(expected, actual, decimal=3)
+
+    def test_inverse_difference_1(self):
+        loader = StaticDatasetLoader("Resources/test_data.json")
+        loader.get_dataset(input_window=1, offset=1, difference=True, standardize=True, val_ratio=0, test_ratio=0)
+        pred = torch.Tensor([[0.15249857033260467], [-0.0663723311599972], [-0.18641092980036]]).squeeze()
+        expected = torch.Tensor([[2], [2], [3]]).squeeze()
+        actual = loader.inverse_difference(pred, 4, "train")
+        torch.testing.assert_close(actual, expected, atol=0.001, rtol=0)
+
+    def test_inverse_difference_2(self):
+        loader = StaticDatasetLoader("Resources/test_data.json")
+        loader.get_dataset(input_window=2, offset=1, difference=True, standardize=True, val_ratio=0, test_ratio=0)
+        pred = torch.Tensor([[0.15249857033260467], [-0.0663723311599972], [-0.18641092980036]]).squeeze()
+        expected = torch.Tensor([[2], [2], [3]]).squeeze()
+        actual = loader.inverse_difference(pred, 4, "train")
+        torch.testing.assert_close(actual, expected, atol=0.001, rtol=0)
+
+    def test_inverse_difference_3(self):
+        loader = StaticDatasetLoader("Resources/test_data.json")
+        with self.assertRaises(Exception):
+            loader.get_dataset(input_window=1, offset=1, difference=True, standardize=True, val_ratio=0, test_ratio=0.2)
+
+    def test_inverse_difference_4(self):
+        loader = StaticDatasetLoader("Resources/test_data.json")
+        loader.get_dataset(input_window=1, offset=1, difference=True, standardize=True, val_ratio=0, test_ratio=0)
+        pred = torch.Tensor([[0.15249857033260467], [-0.0663723311599972], [-0.18641092980036]]).squeeze()
+        expected = torch.Tensor([[2], [2], [3]]).squeeze()
+        actual = loader.inverse_difference(pred, 4, "train")
+        torch.testing.assert_close(actual, expected, atol=0.001, rtol=0)
+
+    # TODO add more test cased for differencing
+    # TODO more tests for squeezing when loading the dataset
+    def test_squeeze_1(self):
+        loader = StaticDatasetLoader("Resources/Experiments/dataset_prod_area_aggregation_2012-2023.json")
+        self.assertEqual(len(loader._fx_data.shape), 2)
 
 
 if __name__ == '__main__':

@@ -49,7 +49,11 @@ class StaticDatasetLoader(object):
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
             self._raw_dataset = json.loads(response.text)
-            self._fx_data = np.array(self._raw_dataset["FX"], dtype=np.float32)
+            fx_data = np.array(self._raw_dataset["FX"], dtype=np.float32)
+            if len(fx_data.shape) == 3:
+                self._fx_data = np.squeeze(fx_data, axis=1)
+            else:
+                self._fx_data = fx_data
             print("SUCCESS Dataset loaded from GitHub")
         else:
             print(f"Failed to retrieve file: {response.status_code}")
@@ -69,6 +73,11 @@ class StaticDatasetLoader(object):
         self._test = self._fx_data[val_snapshots:]
 
     def _difference(self):
+        # Store real values for inverse differencing
+        # Assumes that data is first differenced and then standardized
+        self._train_real = self._train
+        self._val_real = self._val
+        self._test_real = self._test
         self._train = np.diff(self._train, n=1, axis=0)
         self._val = np.diff(self._val, n=1, axis=0)
         self._test = np.diff(self._test, n=1, axis=0)
@@ -159,6 +168,11 @@ class StaticDatasetLoader(object):
 
         return train_signal, val_signal, test_signal
 
+    def inverse_difference(self, pred: torch.Tensor, t: int, dataset="train"):
+        pred_destd = self.destandardize(pred)
+        torch_real = torch.from_numpy(getattr(self, f"_{dataset}_real")[t])
+        return torch_real + pred_destd
+
     def destandardize(self, pred: torch.Tensor):
         # Check whether prediction array has the correct dimension
         assert pred.shape[0] == self._features_train[0].shape[0], (f"The input of dimension {pred.shape} and"
@@ -175,7 +189,8 @@ class StaticDatasetLoader(object):
 
 if __name__ == "__main__":
     loader = StaticDatasetLoader("Resources/test_data.json")
-    data = loader.get_dataset(input_window=2, offset=3, standardize=True, val_ratio=0, test_ratio=0)
+    train, val, test = loader.get_dataset(input_window=2, offset=2, difference=True, standardize=True, val_ratio=0,
+                                          test_ratio=0)
     test_tensor = torch.tensor([[1], [2], [3]])
     test_tensor_squeezed = test_tensor.squeeze()
-    un = loader.destandardize(test_tensor_squeezed)
+    un = loader.inverse_difference(test_tensor_squeezed, 2)
