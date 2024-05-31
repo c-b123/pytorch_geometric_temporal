@@ -188,9 +188,15 @@ class StaticDatasetLoader(object):
 
 
 if __name__ == "__main__":
-    loader = StaticDatasetLoader("Resources/test_data.json")
-    train, val, test = loader.get_dataset(input_window=2, offset=2, difference=True, standardize=True, val_ratio=0,
-                                          test_ratio=0)
-    test_tensor = torch.tensor([[1], [2], [3]])
-    test_tensor_squeezed = test_tensor.squeeze()
-    un = loader.inverse_difference(test_tensor_squeezed, 2)
+    # loader = StaticDatasetLoader("Resources/test_data.json")
+    # train, val, test = loader.get_dataset(input_window=2, offset=2, difference=True, standardize=True, val_ratio=0,
+    #                                       test_ratio=0)
+    # test_tensor = torch.tensor([[1], [2], [3]])
+    # test_tensor_squeezed = test_tensor.squeeze()
+    # un = loader.inverse_difference(test_tensor_squeezed, 2)
+
+    loader = StaticDatasetLoader("Resources/Experiments/dataset_prod_area_aggregation_2012-2023.json")
+
+    train, val, test = loader.get_dataset(input_window=20, offset=1,
+                                          difference=False, standardize=True,
+                                          val_ratio=0.1, test_ratio=0.1)
