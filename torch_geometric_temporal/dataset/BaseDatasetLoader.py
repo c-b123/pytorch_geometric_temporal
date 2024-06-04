@@ -18,6 +18,8 @@ class BaseDatasetLoader(ABC):
         self.val_ratio = None
         self.test_ratio = None
         # Computed parameters
+        self._train_snapshots = None
+        self._val_snapshots = None
         self._training_mean = None
         self._training_std = None
         self._edges = None
@@ -68,11 +70,11 @@ class BaseDatasetLoader(ABC):
         pass
 
     def _train_val_test_split(self):
-        train_snapshots = int((1 - self.val_ratio - self.test_ratio) * self._fx_data.shape[0])
-        val_snapshots = int((1 - self.test_ratio) * self._fx_data.shape[0])
-        self._train = self._fx_data[0:train_snapshots]
-        self._val = self._fx_data[train_snapshots:val_snapshots]
-        self._test = self._fx_data[val_snapshots:]
+        self._train_snapshots = int((1 - self.val_ratio - self.test_ratio) * self._fx_data.shape[0])
+        self._val_snapshots = int((1 - self.test_ratio) * self._fx_data.shape[0])
+        self._train = self._fx_data[0:self._train_snapshots]
+        self._val = self._fx_data[self._train_snapshots:self._val_snapshots]
+        self._test = self._fx_data[self._val_snapshots:]
 
     def _difference(self):
         # Store real values for inverse differencing
