@@ -70,7 +70,7 @@ class DynamicDatasetLoader(BaseDatasetLoader):
 
 
 if __name__ == '__main__':
-    loader = DynamicDatasetLoader("Resources/TestData/test_data_dynamic_v1.json")
+    loader = DynamicDatasetLoader("Resources/Experiments/Dynamic/wellboat_connectivity_dynamic_ryfylke.json")
 
     train, val, test = loader.get_dataset(input_window=20, offset=1,
                                           difference=False, standardize=True,
