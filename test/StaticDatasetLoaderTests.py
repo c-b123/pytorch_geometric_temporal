@@ -3,7 +3,7 @@ import torch
 import torch.testing
 import numpy as np
 
-from torch_geometric_temporal import StaticDatasetLoader
+from torch_geometric_temporal.dataset import StaticDatasetLoader
 
 
 class StaticDatasetLoaderTests(unittest.TestCase):
