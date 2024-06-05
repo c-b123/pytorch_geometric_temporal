@@ -1,7 +1,7 @@
 import numpy as np
 
 from torch_geometric_temporal.signal import DynamicGraphTemporalSignal
-from torch_geometric_temporal.dataset.BaseDatasetLoader import BaseDatasetLoader
+from torch_geometric_temporal.dataset import BaseDatasetLoader
 
 
 class DynamicDatasetLoader(BaseDatasetLoader):

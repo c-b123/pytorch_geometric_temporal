@@ -7,7 +7,6 @@ import torch
 
 
 class BaseDatasetLoader(ABC):
-    # TODO: Support for multivariate time series
 
     def __init__(self, path, colab=False):
         # Input parameters
