@@ -68,15 +68,12 @@ class DynamicDatasetLoader(BaseDatasetLoader):
         val_signal = DynamicGraphTemporalSignal([], [], [], [])
         if val_ratio > 0:
             self._get_targets_and_features_val()
-            print(len(self._features_val))
             val_signal = DynamicGraphTemporalSignal(edges_val, edge_weights_val,
                                                     self._features_val, self._targets_val)
 
         test_signal = DynamicGraphTemporalSignal([], [], [], [])
         if test_ratio > 0:
             self._get_targets_and_features_test()
-            print(len(self._features_test))
-            print(len(edges_test))
             test_signal = DynamicGraphTemporalSignal(edges_test, edge_weights_test,
                                                      self._features_test, self._targets_test)
 
