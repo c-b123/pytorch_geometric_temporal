@@ -16,7 +16,7 @@ class DynamicDatasetLoader(BaseDatasetLoader):
     def _get_edges(self):
         edges = []
         for k, v in self._raw_dataset["edges"].items():
-            edges.append(np.array(v))
+            edges.append(np.array(v).T)
         self._edges = edges
 
     def _get_edge_weights(self):

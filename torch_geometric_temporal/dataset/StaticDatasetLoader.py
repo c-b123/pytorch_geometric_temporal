@@ -5,9 +5,8 @@ import torch
 
 from torch_geometric_temporal.signal import StaticGraphTemporalSignal
 
-
+# TODO inherit from BaseDatasetLoader
 class StaticDatasetLoader(object):
-    # TODO: Support for multivariate time series
 
     def __init__(self, path, colab=False):
         # Input parameters
