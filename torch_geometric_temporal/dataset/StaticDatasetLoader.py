@@ -5,6 +5,9 @@ from torch_geometric_temporal.signal import StaticGraphTemporalSignal
 
 
 class StaticDatasetLoader(BaseDatasetLoader):
+    """
+    A concrete implementation of the BaseDatasetLoader class.
+    """
 
     def __init__(self, path, colab=False):
         super().__init__(path, colab)
@@ -17,6 +20,16 @@ class StaticDatasetLoader(BaseDatasetLoader):
 
     def get_dataset(self, input_window: int = 4, offset: int = 1, difference: bool = False, standardize: bool = True,
                     val_ratio: float = 0, test_ratio: float = 0):
+        """
+        This methods allows to get the datset.
+        Args:
+            input_window: The window size.
+            offset: The number of time steps into the feature.
+            difference: Whether to difference the data.
+            standardize: Whether to standardize the data.
+            val_ratio: The validation ratio.
+            test_ratio: The test ratio.
+        """
         # Set parameters
         self.input_window = input_window
         self.offset = offset

@@ -1,3 +1,48 @@
+# torch-geometric-temporal
+This is repository is an extended and modified version of the torch-geometric-temporal package of Rozemberczki et al.
+The original README can be found below.
+
+## Extensions
+
+### `train_val_test_split.py`
+This file allows to strictly split the data into three datasets: training, validation, and test. This means observations 
+can only be in the training, validation, or test dataset but not in both like in the original implementation.
+
+### `BaseDatasetLoader.py`
+An abstract class necessary for allowing to load custom datasets.
+
+### `StaticDatastLoader.py`
+A concrete implementation of the BaseDatasetLoader class allowing to load the salmon lice data with a static adjacency 
+matrix.
+
+### `DynamicDatastLoader.py`
+A concrete implementation of the BaseDatasetLoader class allowing to load the salmon lice data with a dynamic
+connectivity matrix.
+
+### `StaticDatasetLoaderTests.py`
+Tests for some of the implemented functionality.
+
+## Example Usage
+The following shows how to load a dataset with a dynamic connectivity matrix.
+```python
+from torch_geometric_temporal.dataset import DynamicDatasetLoader
+
+# Load a 
+loader = DynamicDatasetLoader("Resources/Experiments/Dynamic/dataset_dynamic_selected_sites_lag_2012-2023_ablation.json", colab=True)
+
+train, val, test = loader.get_dataset(input_window=8, offset=1, standardize=True,
+                                      val_ratio=0.05, test_ratio=0.05)
+```
+
+
+
+
+
+
+
+
+
+
 [pypi-image]: https://badge.fury.io/py/torch-geometric-temporal.svg
 [pypi-url]: https://pypi.python.org/pypi/torch-geometric-temporal
 [size-image]: https://img.shields.io/github/repo-size/benedekrozemberczki/pytorch_geometric_temporal.svg
@@ -7,8 +52,7 @@
 [docs-image]: https://readthedocs.org/projects/pytorch-geometric-temporal/badge/?version=latest
 [docs-url]: https://pytorch-geometric-temporal.readthedocs.io/en/latest/?badge=latest
 [coverage-image]: https://codecov.io/gh/benedekrozemberczki/pytorch_geometric_temporal/branch/master/graph/badge.svg
-[coverage-url]: https://codecov.io/github/benedekrozemberczki/pytorch_geometric_temporal?branch=master
-
+[coverage-url]: https://codecov.io/github/benedekrozemberczki/pytorch_geometric_temporal?branc
 
 
 <p align="center">

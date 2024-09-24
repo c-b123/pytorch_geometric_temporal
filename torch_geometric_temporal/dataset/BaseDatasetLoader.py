@@ -35,6 +35,12 @@ class BaseDatasetLoader(ABC):
         self._read_web_data(path, colab)
 
     def _read_web_data(self, path, colab):
+        """
+        Reads the data from the GitHub repository masterThesisPlay.
+        Args:
+            path: The file path of the desired dataset.
+            colab: Whether this file is run on Google Colab. True if running it on Google Colab, False otherwise.
+        """
         if colab:
             from google.colab import userdata
             pat = userdata.get("pat")
@@ -69,6 +75,9 @@ class BaseDatasetLoader(ABC):
         pass
 
     def _train_val_test_split(self):
+        """
+        This methods splits into training, validation and test data.
+        """
         self._train_snapshots = int((1 - self.val_ratio - self.test_ratio) * self._fx_data.shape[0])
         self._val_snapshots = int((1 - self.test_ratio) * self._fx_data.shape[0])
         self._train = self._fx_data[0:self._train_snapshots]
@@ -76,6 +85,9 @@ class BaseDatasetLoader(ABC):
         self._test = self._fx_data[self._val_snapshots:]
 
     def _difference(self):
+        """
+        This method allows to difference data. However, this is not used.
+        """
         # Store real values for inverse differencing
         # Assumes that data is first differenced and then standardized
         self._train_real = self._train
@@ -86,6 +98,9 @@ class BaseDatasetLoader(ABC):
         self._test = np.diff(self._test, n=1, axis=0)
 
     def _standardize(self):
+        """
+        This method allows to standardize the data.
+        """
         self._training_mean = np.mean(self._train, axis=0)
         # self._training_std = np.std(self._train, axis=0)
         self._training_std = np.where(np.std(self._train, axis=0) == 0, 0.001, np.std(self._train, axis=0))
@@ -93,11 +108,13 @@ class BaseDatasetLoader(ABC):
         self._val = (self._val - self._training_mean) / self._training_std
         self._test = (self._test - self._training_mean) / self._training_std
 
-    def _normalize(self):
-        # TODO: Implement normalization
-        pass
-
     def _get_targets_and_features(self, dataset, suffix):
+        """
+        This creates feature-target pairs using the sliding window approach.
+        Args:
+            dataset: The dataset on which to create feature-target pairs.
+            suffix: The name of the dataset.
+        """
         n_snapshots = dataset.shape[0] - self.input_window - self.offset + 1
         if n_snapshots <= 0:
             raise Exception(
@@ -126,10 +143,6 @@ class BaseDatasetLoader(ABC):
     def get_training_mean_and_std(self):
         return self._training_mean, self._training_std
 
-    def get_training_min_and_max(self):
-        # TODO: Implement getter for parameters of min-max normalization
-        pass
-
     @abstractmethod
     def get_dataset(self, input_window: int = 4, offset: int = 1, difference: bool = False, standardize: bool = True,
                     val_ratio: float = 0, test_ratio: float = 0):
@@ -141,6 +154,12 @@ class BaseDatasetLoader(ABC):
         return torch_real + pred_destd
 
     def destandardize(self, pred: torch.Tensor):
+        """
+        This method is used for inverse the standardization.
+
+        Args:
+            pred (torch): A torch tensor containing predictions which should get inversed.
+        """
         # Check whether prediction array has the correct dimension
         assert pred.shape[0] == self._features_train[0].shape[0], (f"The input of dimension {pred.shape} and"
                                                                    f" the number of nodes"
@@ -149,9 +168,6 @@ class BaseDatasetLoader(ABC):
         result = np.multiply(pred, self._training_std) + self._training_mean
         return result
 
-    def denormalize(self, pred: torch.Tensor):
-        # TODO: Implement denormalization
-        pass
 
 
 if __name__ == "__main__":
