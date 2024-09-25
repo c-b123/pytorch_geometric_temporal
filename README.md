@@ -2,8 +2,19 @@
 This is repository is an extended and modified version of the torch-geometric-temporal package of Rozemberczki et al.
 The original README can be found below.
 
-## Extensions
 
+## Installation on Google Colab
+```python
+url = f"https://github.com/c-b123/pytorch_geometric_temporal.git"
+!pip install git+$url
+```
+Please note the installation might take some time.
+
+## Requirements
+All requirements are listed in the requirements.txt.
+
+
+## Extensions
 ### `train_val_test_split.py`
 This file allows to strictly split the data into three datasets: training, validation, and test. This means observations 
 can only be in the training, validation, or test dataset but not in both like in the original implementation.
@@ -21,6 +32,9 @@ connectivity matrix.
 
 ### `StaticDatasetLoaderTests.py`
 Tests for some of the implemented functionality.
+
+
+
 
 ## Example Usage
 The following shows how to load a dataset with a dynamic connectivity matrix.
@@ -42,6 +56,8 @@ train, val, test = loader.get_dataset(input_window=8, offset=1, standardize=True
 
 
 
+-----------------------------------------------------
+# Original README
 
 [pypi-image]: https://badge.fury.io/py/torch-geometric-temporal.svg
 [pypi-url]: https://pypi.python.org/pypi/torch-geometric-temporal

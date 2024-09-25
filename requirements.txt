@@ -1,0 +1,8 @@
+numpy~=1.26.4
+networkx~=3.3
+torch~=2.3.0
+torch_geometric~=2.5.3
+tqdm~=4.66.2
+matplotlib~=3.8.4
+setuptools~=68.2.0
+requests~=2.31.0
