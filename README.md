@@ -1,73 +1,88 @@
 # torch-geometric-temporal
+
 This is repository is an extended and modified version of the torch-geometric-temporal package of Rozemberczki et al.
 The original README can be found below.
 
-
 ## Installation on Google Colab
+
 ```python
 url = f"https://github.com/c-b123/pytorch_geometric_temporal.git"
-!pip install git+$url
+!pip install git +$url
 ```
+
 Please note the installation might take some time.
 
 ## Requirements
+
 All requirements are listed in the requirements.txt.
 
-
 ## Extensions
+
 ### `train_val_test_split.py`
-This file allows to strictly split the data into three datasets: training, validation, and test. This means observations 
-can only be in the training, validation, or test dataset but not in both like in the original implementation.
+
+This file allows to strictly split the data into three datasets: training, validation, and test. This means observations
+can only be in the training, validation, or test dataset but not in both like in the original implementation. This file
+can be found here: [train_val_test_split.py](torch_geometric_temporal/signal/train_val_test_split.py).
 
 ### `BaseDatasetLoader.py`
-An abstract class necessary for allowing to load custom datasets.
 
-### `StaticDatastLoader.py`
-A concrete implementation of the BaseDatasetLoader class allowing to load the salmon lice data with a static adjacency 
-matrix.
+An abstract class necessary for allowing to load custom datasets. This file
+can be found here: [BaseDatasetLoader.py](torch_geometric_temporal/dataset/BaseDatasetLoader.py).
 
-### `DynamicDatastLoader.py`
+### `StaticDatasetLoader.py`
+
+A concrete implementation of the BaseDatasetLoader class allowing to load the salmon lice data with a static adjacency
+matrix. This file
+can be found here: [StaticDatasetLoader.py](torch_geometric_temporal/dataset/StaticDatasetLoader.py).
+
+### `DynamicDatasetLoader.py`
+
 A concrete implementation of the BaseDatasetLoader class allowing to load the salmon lice data with a dynamic
-connectivity matrix.
+connectivity matrix. This file
+can be found here: [DynamicDatasetLoader.py](torch_geometric_temporal/dataset/DynamicDatasetLoader.py).
 
 ### `StaticDatasetLoaderTests.py`
-Tests for some of the implemented functionality.
 
-
-
+Tests for some of the implemented functionality. This file
+can be found here: [StaticDatasetLoaderTests.py](test/StaticDatasetLoaderTests.py).
 
 ## Example Usage
+
 The following shows how to load a dataset with a dynamic connectivity matrix.
+
 ```python
 from torch_geometric_temporal.dataset import DynamicDatasetLoader
 
 # Load a 
-loader = DynamicDatasetLoader("Resources/Experiments/Dynamic/dataset_dynamic_selected_sites_lag_2012-2023_ablation.json", colab=True)
+loader = DynamicDatasetLoader(
+    "Resources/Experiments/Dynamic/dataset_dynamic_selected_sites_lag_2012-2023_ablation.json", colab=True)
 
 train, val, test = loader.get_dataset(input_window=8, offset=1, standardize=True,
                                       val_ratio=0.05, test_ratio=0.05)
 ```
 
-
-
-
-
-
-
-
-
 -----------------------------------------------------
+
 # Original README
 
 [pypi-image]: https://badge.fury.io/py/torch-geometric-temporal.svg
+
 [pypi-url]: https://pypi.python.org/pypi/torch-geometric-temporal
+
 [size-image]: https://img.shields.io/github/repo-size/benedekrozemberczki/pytorch_geometric_temporal.svg
+
 [size-url]: https://github.com/benedekrozemberczki/pytorch_geometric_temporal/archive/master.zip
+
 [build-image]: https://github.com/benedekrozemberczki/pytorch_geometric_temporal/workflows/CI/badge.svg
+
 [build-url]: https://github.com/benedekrozemberczki/pytorch_geometric_temporal/actions?query=workflow%3ACI
+
 [docs-image]: https://readthedocs.org/projects/pytorch-geometric-temporal/badge/?version=latest
+
 [docs-url]: https://pytorch-geometric-temporal.readthedocs.io/en/latest/?badge=latest
+
 [coverage-image]: https://codecov.io/gh/benedekrozemberczki/pytorch_geometric_temporal/branch/master/graph/badge.svg
+
 [coverage-url]: https://codecov.io/github/benedekrozemberczki/pytorch_geometric_temporal?branc
 
 
@@ -84,33 +99,47 @@ train, val, test = loader.get_dataset(input_window=8, offset=1, standardize=True
 [![Arxiv](https://img.shields.io/badge/ArXiv-2104.07788-orange.svg)](https://arxiv.org/abs/2104.07788)
 [![benedekrozemberczki](https://img.shields.io/twitter/follow/benrozemberczki?style=social&logo=twitter)](https://twitter.com/intent/follow?screen_name=benrozemberczki)
 
-**[Documentation](https://pytorch-geometric-temporal.readthedocs.io)** | **[External Resources](https://pytorch-geometric-temporal.readthedocs.io/en/latest/notes/resources.html)** | **[Datasets](https://pytorch-geometric-temporal.readthedocs.io/en/latest/notes/introduction.html#discrete-time-datasets)**
+**[Documentation](https://pytorch-geometric-temporal.readthedocs.io)** | *
+*[External Resources](https://pytorch-geometric-temporal.readthedocs.io/en/latest/notes/resources.html)** | *
+*[Datasets](https://pytorch-geometric-temporal.readthedocs.io/en/latest/notes/introduction.html#discrete-time-datasets)
+**
 
-*PyTorch Geometric Temporal* is a temporal (dynamic) extension library for [PyTorch Geometric](https://github.com/rusty1s/pytorch_geometric).
+*PyTorch Geometric Temporal* is a temporal (dynamic) extension library
+for [PyTorch Geometric](https://github.com/rusty1s/pytorch_geometric).
 
 <p align="justify">The library consists of various dynamic and temporal geometric deep learning, embedding, and spatio-temporal regression methods from a variety of published research papers. Moreover, it comes with an easy-to-use dataset loader, train-test splitter and temporal snaphot iterator for dynamic and temporal graphs. The framework naturally provides GPU support. It also comes with a number of benchmark datasets from the epidemological forecasting, sharing economy, energy production and web traffic management domains. Finally, you can also create your own datasets.</p>
 
-The package interfaces well with [Pytorch Lightning](https://pytorch-lightning.readthedocs.io) which allows training on CPUs, single and multiple GPUs out-of-the-box. Take a look at this [introductory example](https://github.com/benedekrozemberczki/pytorch_geometric_temporal/blob/master/examples/recurrent/lightning_example.py) of using PyTorch Geometric Temporal with Pytorch Lighning.
+The package interfaces well with [Pytorch Lightning](https://pytorch-lightning.readthedocs.io) which allows training on
+CPUs, single and multiple GPUs out-of-the-box. Take a look at
+this [introductory example](https://github.com/benedekrozemberczki/pytorch_geometric_temporal/blob/master/examples/recurrent/lightning_example.py)
+of using PyTorch Geometric Temporal with Pytorch Lighning.
 
-We also provide detailed examples for each of the [recurrent](https://github.com/benedekrozemberczki/pytorch_geometric_temporal/tree/master/examples/recurrent) models and [notebooks](https://github.com/benedekrozemberczki/pytorch_geometric_temporal/tree/master/notebooks) for the attention based ones.
+We also provide detailed examples for each of
+the [recurrent](https://github.com/benedekrozemberczki/pytorch_geometric_temporal/tree/master/examples/recurrent) models
+and [notebooks](https://github.com/benedekrozemberczki/pytorch_geometric_temporal/tree/master/notebooks) for the
+attention based ones.
 
 
 --------------------------------------------------------------------------------
 
 **Case Study Tutorials**
 
-We provide in-depth case study tutorials in the [Documentation](https://pytorch-geometric-temporal.readthedocs.io/en/latest/), each covers an aspect of PyTorch Geometric Temporal’s functionality.
+We provide in-depth case study tutorials in
+the[Documentation](https://pytorch-geometric-temporal.readthedocs.io/en/latest/), each covers an aspect of PyTorch
+Geometric Temporal’s functionality.
 
-**Incremental Training**: [Epidemiological Forecasting Case Study](https://pytorch-geometric-temporal.readthedocs.io/en/latest/notes/introduction.html#epidemiological-forecasting)
+**Incremental Training
+**:[Epidemiological Forecasting Case Study](https://pytorch-geometric-temporal.readthedocs.io/en/latest/notes/introduction.html#epidemiological-forecasting)
 
-**Cumulative Training**: [Web Traffic Management Case Study](https://pytorch-geometric-temporal.readthedocs.io/en/latest/notes/introduction.html#web-traffic-prediction)
+**Cumulative Training
+**:[Web Traffic Management Case Study](https://pytorch-geometric-temporal.readthedocs.io/en/latest/notes/introduction.html#web-traffic-prediction)
 
 --------------------------------------------------------------------------------
 
 **Citing**
 
-
-If you find *PyTorch Geometric Temporal* and the new datasets useful in your research, please consider adding the following citation:
+If you find *PyTorch Geometric Temporal* and the new datasets useful in your research, please consider adding the
+following citation:
 
 ```bibtex
 @inproceedings{rozemberczki2021pytorch,
@@ -126,12 +155,16 @@ If you find *PyTorch Geometric Temporal* and the new datasets useful in your res
 
 **A simple example**
 
-PyTorch Geometric Temporal makes implementing Dynamic and Temporal Graph Neural Networks quite easy - see the accompanying [tutorial](https://pytorch-geometric-temporal.readthedocs.io/en/latest/notes/introduction.html#applications). For example, this is all it takes to implement a recurrent graph convolutional network with two consecutive [graph convolutional GRU](https://arxiv.org/abs/1612.07659) cells and a linear layer:
+PyTorch Geometric Temporal makes implementing Dynamic and Temporal Graph Neural Networks quite easy - see the
+accompanying [tutorial](https://pytorch-geometric-temporal.readthedocs.io/en/latest/notes/introduction.html#applications).
+For example, this is all it takes to implement a recurrent graph convolutional network with two
+consecutive [graph convolutional GRU](https://arxiv.org/abs/1612.07659) cells and a linear layer:
 
 ```python
 import torch
 import torch.nn.functional as F
 from torch_geometric_temporal.nn.recurrent import GConvGRU
+
 
 class RecurrentGCN(torch.nn.Module):
 
@@ -151,72 +184,159 @@ class RecurrentGCN(torch.nn.Module):
         x = self.linear(x)
         return F.log_softmax(x, dim=1)
 ```
+
 --------------------------------------------------------------------------------
 
 **Methods Included**
 
 In detail, the following temporal graph neural networks were implemented.
 
-
 **Recurrent Graph Convolutions**
 
-* **[DCRNN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.dcrnn.DCRNN)** from Li *et al.*: [Diffusion Convolutional Recurrent Neural Network: Data-Driven Traffic Forecasting](https://arxiv.org/abs/1707.01926) (ICLR 2018)
+* *
+  *[DCRNN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.dcrnn.DCRNN)
+  ** from Li *et
+  al.*: [Diffusion Convolutional Recurrent Neural Network: Data-Driven Traffic Forecasting](https://arxiv.org/abs/1707.01926) (
+  ICLR 2018)
 
-* **[GConvGRU](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.gconv_gru.GConvGRU)** from Seo *et al.*: [Structured Sequence Modeling with Graph  Convolutional Recurrent Networks](https://arxiv.org/abs/1612.07659) (ICONIP 2018)
+* *
+  *[GConvGRU](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.gconv_gru.GConvGRU)
+  ** from Seo *et
+  al.*: [Structured Sequence Modeling with Graph  Convolutional Recurrent Networks](https://arxiv.org/abs/1612.07659) (
+  ICONIP 2018)
 
-* **[GConvLSTM](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.gconv_lstm.GConvLSTM)** from Seo *et al.*: [Structured Sequence Modeling with Graph  Convolutional Recurrent Networks](https://arxiv.org/abs/1612.07659) (ICONIP 2018)
+* *
+  *[GConvLSTM](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.gconv_lstm.GConvLSTM)
+  ** from Seo *et
+  al.*: [Structured Sequence Modeling with Graph  Convolutional Recurrent Networks](https://arxiv.org/abs/1612.07659) (
+  ICONIP 2018)
 
-* **[GC-LSTM](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.gc_lstm.GCLSTM)** from Chen *et al.*: [GC-LSTM: Graph Convolution Embedded LSTM for Dynamic Link Prediction](https://arxiv.org/abs/1812.04206) (CoRR 2018)
+* *
+  *[GC-LSTM](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.gc_lstm.GCLSTM)
+  ** from Chen *et
+  al.*: [GC-LSTM: Graph Convolution Embedded LSTM for Dynamic Link Prediction](https://arxiv.org/abs/1812.04206) (CoRR
+  2018)
 
-* **[LRGCN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.lrgcn.LRGCN)** from Li *et al.*: [Predicting Path Failure In Time-Evolving Graphs](https://arxiv.org/abs/1905.03994) (KDD 2019)
+* *
+  *[LRGCN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.lrgcn.LRGCN)
+  ** from Li *et al.*: [Predicting Path Failure In Time-Evolving Graphs](https://arxiv.org/abs/1905.03994) (KDD 2019)
 
-* **[DyGrEncoder](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.dygrae.DyGrEncoder)** from Taheri *et al.*: [Learning to Represent the Evolution of Dynamic Graphs with Recurrent Models](https://dl.acm.org/doi/10.1145/3308560.3316581)
+* *
+  *[DyGrEncoder](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.dygrae.DyGrEncoder)
+  ** from Taheri *et
+  al.*: [Learning to Represent the Evolution of Dynamic Graphs with Recurrent Models](https://dl.acm.org/doi/10.1145/3308560.3316581)
 
-* **[EvolveGCNH](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.evolvegcnh.EvolveGCNH)** from Pareja *et al.*: [EvolveGCN: Evolving Graph Convolutional Networks for Dynamic Graphs](https://arxiv.org/abs/1902.10191)
+* *
+  *[EvolveGCNH](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.evolvegcnh.EvolveGCNH)
+  ** from Pareja *et
+  al.*: [EvolveGCN: Evolving Graph Convolutional Networks for Dynamic Graphs](https://arxiv.org/abs/1902.10191)
 
-* **[EvolveGCNO](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.evolvegcno.EvolveGCNO)** from Pareja *et al.*: [EvolveGCN: Evolving Graph Convolutional Networks for Dynamic Graphs](https://arxiv.org/abs/1902.10191)
+* *
+  *[EvolveGCNO](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.evolvegcno.EvolveGCNO)
+  ** from Pareja *et
+  al.*: [EvolveGCN: Evolving Graph Convolutional Networks for Dynamic Graphs](https://arxiv.org/abs/1902.10191)
 
-* **[T-GCN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.temporalgcn.TGCN)** from Zhao *et al.*: [T-GCN: A Temporal Graph Convolutional Network for Traffic Prediction](https://arxiv.org/abs/1811.05320)
+* *
+  *[T-GCN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.temporalgcn.TGCN)
+  ** from Zhao *et
+  al.*: [T-GCN: A Temporal Graph Convolutional Network for Traffic Prediction](https://arxiv.org/abs/1811.05320)
 
-* **[A3T-GCN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.attentiontemporalgcn.A3TGCN)** from Zhu *et al.*: [A3T-GCN: Attention Temporal Graph Convolutional Network for Traffic Forecasting](https://arxiv.org/abs/2006.11583) 
+* *
+  *[A3T-GCN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.attentiontemporalgcn.A3TGCN)
+  ** from Zhu *et
+  al.*: [A3T-GCN: Attention Temporal Graph Convolutional Network for Traffic Forecasting](https://arxiv.org/abs/2006.11583)
 
-* **[AGCRN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.agcrn.AGCRN)** from Bai *et al.*: [Adaptive Graph Convolutional Recurrent Network for Traffic Forecasting](https://arxiv.org/abs/2007.02842) (NeurIPS 2020)
+* *
+  *[AGCRN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.agcrn.AGCRN)
+  ** from Bai *et
+  al.*: [Adaptive Graph Convolutional Recurrent Network for Traffic Forecasting](https://arxiv.org/abs/2007.02842) (
+  NeurIPS 2020)
 
-* **[MPNN LSTM](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.mpnn_lstm.MPNNLSTM)** from Panagopoulos *et al.*: [Transfer Graph Neural Networks for Pandemic Forecasting](https://arxiv.org/abs/2009.08388) (AAAI 2021)
-  
+* *
+  *[MPNN LSTM](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.mpnn_lstm.MPNNLSTM)
+  ** from Panagopoulos *et
+  al.*: [Transfer Graph Neural Networks for Pandemic Forecasting](https://arxiv.org/abs/2009.08388) (AAAI 2021)
+
 **Attention Aggregated Temporal Graph Convolutions**
 
-* **[STGCN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.attention.stgcn.STConv)** from Yu *et al.*: [Spatio-Temporal Graph Convolutional Networks: A Deep Learning Framework for Traffic Forecasting](https://arxiv.org/abs/1709.04875) (IJCAI 2018)
+* *
+  *[STGCN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.attention.stgcn.STConv)
+  ** from Yu *et
+  al.*: [Spatio-Temporal Graph Convolutional Networks: A Deep Learning Framework for Traffic Forecasting](https://arxiv.org/abs/1709.04875) (
+  IJCAI 2018)
 
-* **[ASTGCN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.attention.astgcn.ASTGCN)** from Guo *et al.*: [Attention Based Spatial-Temporal Graph Convolutional Networks for Traffic Flow Forecasting](https://ojs.aaai.org/index.php/AAAI/article/view/3881) (AAAI 2019)
+* *
+  *[ASTGCN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.attention.astgcn.ASTGCN)
+  ** from Guo *et
+  al.*: [Attention Based Spatial-Temporal Graph Convolutional Networks for Traffic Flow Forecasting](https://ojs.aaai.org/index.php/AAAI/article/view/3881) (
+  AAAI 2019)
 
-* **[MSTGCN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.attention.mstgcn.MSTGCN)** from Guo *et al.*: [Attention Based Spatial-Temporal Graph Convolutional Networks for Traffic Flow Forecasting](https://ojs.aaai.org/index.php/AAAI/article/view/3881) (AAAI 2019)
+* *
+  *[MSTGCN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.attention.mstgcn.MSTGCN)
+  ** from Guo *et
+  al.*: [Attention Based Spatial-Temporal Graph Convolutional Networks for Traffic Flow Forecasting](https://ojs.aaai.org/index.php/AAAI/article/view/3881) (
+  AAAI 2019)
 
-* **[GMAN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.attention.gman.GMAN)** from Zheng *et al.*: [GMAN: A Graph Multi-Attention Network for Traffic Prediction](https://arxiv.org/pdf/1911.08415.pdf) (AAAI 2020)
+* *
+  *[GMAN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.attention.gman.GMAN)
+  ** from Zheng *et
+  al.*: [GMAN: A Graph Multi-Attention Network for Traffic Prediction](https://arxiv.org/pdf/1911.08415.pdf) (AAAI 2020)
 
-* **[MTGNN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.attention.mtgnn.MTGNN)** from Wu *et al.*: [Connecting the Dots: Multivariate Time Series Forecasting with Graph Neural Networks](https://arxiv.org/abs/2005.11650) (KDD 2020)
+* *
+  *[MTGNN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.attention.mtgnn.MTGNN)
+  ** from Wu *et
+  al.*: [Connecting the Dots: Multivariate Time Series Forecasting with Graph Neural Networks](https://arxiv.org/abs/2005.11650) (
+  KDD 2020)
 
-* **[2S-AGCN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.attention.tsagcn.AAGCN)** from Shi *et al.*: [Two-Stream Adaptive Graph Convolutional Networks for Skeleton-Based Action Recognition](https://arxiv.org/abs/1805.07694) (CVPR 2019)
+* *
+  *[2S-AGCN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.attention.tsagcn.AAGCN)
+  ** from Shi *et
+  al.*: [Two-Stream Adaptive Graph Convolutional Networks for Skeleton-Based Action Recognition](https://arxiv.org/abs/1805.07694) (
+  CVPR 2019)
 
-* **[DNNTSP](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.attention.dnntsp.DNNTSP)** from Yu *et al.*: [Predicting Temporal Sets with Deep Neural Networks](https://dl.acm.org/doi/abs/10.1145/3394486.3403152) (KDD 2020)
+* *
+  *[DNNTSP](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.attention.dnntsp.DNNTSP)
+  ** from Yu *et
+  al.*: [Predicting Temporal Sets with Deep Neural Networks](https://dl.acm.org/doi/abs/10.1145/3394486.3403152) (KDD
+  2020)
 
 **Auxiliary Graph Convolutions**
 
-* **[TemporalConv](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.attention.stgcn.TemporalConv)** from Yu *et al.*: [Spatio-Temporal Graph Convolutional Networks: A Deep Learning Framework for Traffic Forecasting](https://arxiv.org/abs/1709.04875) (IJCAI 2018)
+* *
+  *[TemporalConv](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.attention.stgcn.TemporalConv)
+  ** from Yu *et
+  al.*: [Spatio-Temporal Graph Convolutional Networks: A Deep Learning Framework for Traffic Forecasting](https://arxiv.org/abs/1709.04875) (
+  IJCAI 2018)
 
-* **[DConv](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.dcrnn.DConv)** from Li *et al.*: [Diffusion Convolutional Recurrent Neural Network: Data-Driven Traffic Forecasting](https://arxiv.org/abs/1707.01926) (ICLR 2018)
+* *
+  *[DConv](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.dcrnn.DConv)
+  ** from Li *et
+  al.*: [Diffusion Convolutional Recurrent Neural Network: Data-Driven Traffic Forecasting](https://arxiv.org/abs/1707.01926) (
+  ICLR 2018)
 
-* **[ChebConvAttention](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.attention.astgcn.ChebConvAttention)** from Guo *et al.*: [Attention Based Spatial-Temporal Graph Convolutional Networks for Traffic Flow Forecasting](https://ojs.aaai.org/index.php/AAAI/article/view/3881) (AAAI 2019)
+* *
+  *[ChebConvAttention](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.attention.astgcn.ChebConvAttention)
+  ** from Guo *et
+  al.*: [Attention Based Spatial-Temporal Graph Convolutional Networks for Traffic Flow Forecasting](https://ojs.aaai.org/index.php/AAAI/article/view/3881) (
+  AAAI 2019)
 
-* **[AVWGCN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.agcrn.AVWGCN)** from Bai *et al.*: [Adaptive Graph Convolutional Recurrent Network for Traffic Forecasting](https://arxiv.org/abs/2007.02842) (NeurIPS 2020)
-  
+* *
+  *[AVWGCN](https://pytorch-geometric-temporal.readthedocs.io/en/latest/modules/root.html#torch_geometric_temporal.nn.recurrent.agcrn.AVWGCN)
+  ** from Bai *et
+  al.*: [Adaptive Graph Convolutional Recurrent Network for Traffic Forecasting](https://arxiv.org/abs/2007.02842) (
+  NeurIPS 2020)
+
 --------------------------------------------------------------------------------
 
 
-Head over to our [documentation](https://pytorch-geometric-temporal.readthedocs.io) to find out more about installation, creation of datasets and a full list of implemented methods and available datasets.
-For a quick start, check out the [examples](https://pytorch-geometric-temporal.readthedocs.io) in the `examples/` directory.
+Head over to our [documentation](https://pytorch-geometric-temporal.readthedocs.io) to find out more about installation,
+creation of datasets and a full list of implemented methods and available datasets.
+For a quick start, check out the [examples](https://pytorch-geometric-temporal.readthedocs.io) in the `examples/`
+directory.
 
-If you notice anything unexpected, please open an [issue](https://benedekrozemberczki/pytorch_geometric_temporal/issues). If you are missing a specific method, feel free to open a [feature request](https://github.com/benedekrozemberczki/pytorch_geometric_temporal/issues).
+If you notice anything unexpected, please open
+an [issue](https://benedekrozemberczki/pytorch_geometric_temporal/issues). If you are missing a specific method, feel
+free to open a [feature request](https://github.com/benedekrozemberczki/pytorch_geometric_temporal/issues).
 
 
 --------------------------------------------------------------------------------
@@ -231,6 +351,7 @@ pip install torch-geometric-temporal
 ```
 
 [pytorch-install]: https://pytorch.org/get-started/locally/
+
 [pyg-install]: https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html
 
 --------------------------------------------------------------------------------
@@ -240,6 +361,7 @@ pip install torch-geometric-temporal
 ```
 $ python -m pytest test
 ```
+
 --------------------------------------------------------------------------------
 
 **License**
